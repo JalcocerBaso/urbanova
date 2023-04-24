@@ -1,0 +1,158 @@
+<section class="content" style="padding-left: 15px;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"></h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-primary btn-block btn-sm" (click)="modalEmpresaNuevo(NuevoEmpresa)"><i class="fa fa-plus-circle"></i> Nueva empresa</button>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th style="width: 300px;">Nombre</th>
+                        <th>Descripción</th>
+                        <th>Estatus</th>
+                        <th class="project-actions text-right" style="width: 20%;">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let companies of dataCompanies">
+                      <tr>
+                        <td>{{companies.id}}</td>
+                        <td>{{companies.nombre}}</td>
+                        <td>{{companies.descripcion}}</td>
+                        <td *ngIf="companies.status == '1'">Activo</td>
+                        <td *ngIf="companies.status != '1'">Inactivo</td>
+                        <td class="project-actions text-right">
+                          <div class="btn-group btn-group-sm">
+                            <a  class="btn btn-info" ngbTooltip="Modificar" (click)="modalEditarEmpresa(EmpresaModalTemaplate, companies)"><i class="fas fa-pencil-alt"></i></a> 
+                            <a *ngIf="companies.status == '1'" class="btn btn-danger" ngbTooltip="Eliminar" (click)="modalEliminarEmpresa(modalEliminar, companies.id)"><i class="fas fa-trash"></i></a>
+                          </div>
+                      </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+        </div>
+    </div>
+</section>
+
+<!-- Modal agregar nuevo -->
+<ng-template #NuevoEmpresa let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="">Nueva Empresa</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- form start -->
+      <form  [formGroup]="registerForm" (submit)="guardarNuevaEmpresa()">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="">Nombre</label>
+              <input type="text" class="form-control" formControlName="nombreEmpresa"  placeholder="Nombre de la empresa" name="nombreEmpresa" required
+              [ngClass]="{ 'is-invalid': submitted && f['nombreEmpresa'].errors }">
+              <div *ngIf="submitted && f['nombreEmpresa'].errors" class="invalid-feedback">
+                <div *ngIf="f['nombreEmpresa'].errors['required']">El campo es obligatorio</div>
+              </div> 
+            </div>
+            <div class="form-group">
+              <label for="">Descripción</label>
+              <textarea class="form-control" formControlName="descripcion" rows="3" name="descripcion" placeholder="Descripción"></textarea>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+            <button type="submit"  class="btn btn-primary">Guardar</button>
+          </div>
+         </form>
+    </div>
+    
+  </div>
+</ng-template>
+<!-- Modal editar empresa -->
+<ng-template #EmpresaModalTemaplate let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="">Editar Empresa</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- form start -->
+      <form  [formGroup]="updateForm" >
+          <div class="card-body">
+            <div class="form-group">
+              <input type="hidden" formControlName="idEmpresa" name="idEmpresa">
+              <label for="">Nombre</label>
+              <input type="text" class="form-control" formControlName="nombreEmpresaUpdate"  placeholder="Nombre de la empresa" name="nombreEmpresaUpdate" required
+              [ngClass]="{ 'is-invalid': submittedUpdate && ControlsUpdate['nombreEmpresaUpdate'].errors }">
+              <div *ngIf="submittedUpdate && ControlsUpdate['nombreEmpresaUpdate'].errors" class="invalid-feedback">
+                <div *ngIf="ControlsUpdate['nombreEmpresaUpdate'].errors['required']">El campo es obligatorio</div>
+              </div> 
+            </div>
+            <div class="form-group">
+              <label for="">Descripción</label>
+              <textarea class="form-control" formControlName="descripcionUpdate" rows="3" name="descripcionUpdate" placeholder="Descripción"></textarea>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+            <button type="submit" (click)="modificarEmpresa()" class="btn btn-primary">Guardar</button>
+          </div>
+         </form>
+    </div>
+    
+  </div>
+</ng-template>
+<!-- Modal eliminar -->
+<ng-template #modalEliminar let-modal>
+  <div class="modal-content">
+    <!-- <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div> -->
+    <div class="modal-body">
+      <!-- form start -->
+          <div class="card-body">
+            <div class="container text-center">
+              <div class="row">
+                <div class="col">
+                  <a class="btn btn-warning">
+                    <i class="fa fa-exclamation fa-3x" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <h5><b>¿Esta seguro que desea eliminar una empresa?
+                  </b></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+      <button type="button" (click)="eliminarEmpresa()" class="btn btn-primary">Si</button>
+    </div>
+  </div>
+</ng-template>

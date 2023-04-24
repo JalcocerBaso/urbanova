@@ -1,0 +1,140 @@
+<section class="content" style="padding-left: 15px;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"></h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-primary btn-block btn-sm" (click)="modalNuevaConstructora(NuevaCons)" ><i class="fa fa-plus-circle"></i> Nueva constructora</button>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Codigo</th>
+                        <th class="project-actions text-right" style="width: 20%;">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody >
+                      <tr *ngFor="let construccion of dtConstruccions">
+                        <td>{{construccion.id}}</td>
+                        <td>{{construccion.nombre}}</td>
+                        <td>{{construccion.codigo}}</td>
+                        <td class="project-actions text-right">
+                          <div class="btn-group btn-group-sm">
+                            <a  class="btn btn-info" ngbTooltip="Modificar" (click)="modalEditar(EditarCons, construccion.id)" ><i class="fas fa-pencil-alt"></i></a> 
+                            <a  class="btn btn-danger" ngbTooltip="Eliminar"><i class="fas fa-trash"></i></a>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+        </div>
+    </div>
+</section>
+
+<!-- Modal agregar nuevo -->
+<ng-template #NuevaCons let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="">Nueva constructora</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- form start -->
+      <form [formGroup]="registerForm" (ngSubmit)="guardarNuevaConstruccion()">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="">Selecciona una compañia</label>
+              <select class="form-select" formControlName="company"  name="company"  required [ngClass]="{ 'is-invalid': submitted && f['company'].errors }">
+                <option value="null" >Selecciona una opción</option>
+                <option *ngFor="let companies of dtCompanies; let x = index" value="{{companies.id}}" >{{companies.nombre}}</option>
+              </select>
+              <div *ngIf="submitted && f['company'].errors" class="invalid-feedback">
+                <div *ngIf="f['company'].errors['required']">El campo es obligatorio</div>
+              </div> 
+            </div>
+            <div class="form-group">
+              <label for="">Codigo</label>
+              <input type="text" class="form-control" formControlName="codigo" placeholder="Codigo" name="codigo" 
+              [ngClass]="{ 'is-invalid': submitted && f['codigo'].errors }" required>
+              <div *ngIf="submitted && f['codigo'].errors" class="invalid-feedback">
+                <div *ngIf="f['codigo'].errors['required']">El campo es obligatorio</div>
+              </div> 
+            </div>
+            <div class="form-group">
+              <label for="">Liga url</label>
+              <input type="text" class="form-control" formControlName="link" placeholder="Liga url" name="link">
+            </div>
+            <div class="form-group">
+              <label >Fuente</label>
+              <input type="text" class="form-control" formControlName="fuente" placeholder="Fuente" name="fuente">
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+         </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal Editar -->
+<ng-template #EditarCons let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="">Editar constructora</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- form start -->
+      <form [formGroup]="updateForm">
+          <div class="card-body">
+            <input type="hidden" formControlName="idConstruction" name="idConstruction">
+            <div class="form-group">
+              <label >Nombre</label>
+              <input type="text" class="form-control" formControlName="nombreUpdate" name="nombreUpdate"  placeholder="nombre" >
+            </div>
+            <div class="form-group">
+              <label for="">Selecciona una compañia</label>
+              <select class="form-select" formControlName="companyUpdate" name="companyUpdate" >
+                <option value="null" >Selecciona una opción</option>
+                <option *ngFor="let companies of dtCompanies" value="{{companies.id}}" >{{companies.nombre}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="">Codigo</label>
+              <input type="text" class="form-control" formControlName="codigoUpdate" placeholder="Codigo" name="codigoUpdate"  >
+              
+            </div>
+            <div class="form-group">
+              <label for="">Liga url</label>
+              <input type="text" class="form-control" formControlName="linkUpdate" name="linkUpdate" placeholder="Liga url" >
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+         </form>
+    </div>
+  </div>
+</ng-template>
