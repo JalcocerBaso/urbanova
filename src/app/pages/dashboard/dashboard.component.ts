@@ -17,16 +17,9 @@ export class DashboardComponent implements OnInit {
 
   total: number = 0;
   ngOnInit(): void {
-    // this.docServices.getDriveDocuments().subscribe(response => {
-    //   //this.inforArchivos = response;
-    //   console.log(this.inforArchivos);
-    //   for (let index = 0; index < Object.keys(response).length; index++) {
-    //     this.inforArchivos.push(response[index]);
-        
-    //     this.total++;
-    //   }
-    //   console.log(this.total);
-    //   console.log(this.inforArchivos);
-    // });
+    this.docServices.getDriveDocuments().subscribe(response => {
+      //this.inforArchivos = response;
+      console.log(response);
+    });
   }
 }

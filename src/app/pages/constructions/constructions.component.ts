@@ -12,13 +12,15 @@ import { CompaniesService } from '../../services/companies.service';
   styleUrls: ['./constructions.component.css']
 })
 export class ConstructionsComponent implements OnInit, AfterViewInit, OnDestroy{
+  
   constructor(private modalService: NgbModal,
               private constructionService: ConstructionsService,
               private fb: FormBuilder,
               private companiesService: CompaniesService
     ){
     }
-  
+  idConstruction: number = 0;
+  estatus: string = "";
   dtOptions: DataTables.Settings = {};
   public dtConstruccions: constructions[] = [];
   dtTrigger: Subject<any> = new Subject();
@@ -26,12 +28,16 @@ export class ConstructionsComponent implements OnInit, AfterViewInit, OnDestroy{
   constructions: any[] = [];
   updateForm: any;
   dtCompanies: any[] = [];
+  submittedUpdate = false;
+  mensajeActivarDesactivar: string = "";
+  textoBotonActivarDes: string = "";
   
   registerForm = this.fb.group({
+    nombre: ['', Validators.required],
     company: ['', Validators.required],
     codigo: ['', Validators.required],
-    link: ['', Validators.required],
-    fuente: ['', Validators.required]
+    link: [''],
+    fuente: ['']
   });
 
   ngOnInit(): void {
@@ -62,9 +68,9 @@ export class ConstructionsComponent implements OnInit, AfterViewInit, OnDestroy{
   
   modalNuevaConstructora(template: TemplateRef<any>){
     this.registerForm.reset();
+    this.submitted = false;
     this.companiesService.obtenerEmpresas().subscribe(response => {
       this.dtCompanies = response.data;
-      console.log(response.data);
     });
     this.registerForm.controls["company"].setValue("null");
     this.registerForm.get("company")?.valueChanges.subscribe(f =>{
@@ -75,19 +81,25 @@ export class ConstructionsComponent implements OnInit, AfterViewInit, OnDestroy{
 
   guardarNuevaConstruccion(){
     this.submitted = true;
-    console.log(this.registerForm);
+    if(this.registerForm.value.company == "null"){
+      this.registerForm.controls["company"].setErrors({require: true });
+    }
     if (this.registerForm.invalid) {
       return;
     } else{
-      console.log(JSON.stringify(this.registerForm.value));
-      this.registerForm.reset();
+      const construction = {empresa_id: this.registerForm.value.company,
+        Nombre: this.registerForm.value.nombre,
+        codigo: this.registerForm.value.codigo,
+        link: this.registerForm.value.link,
+        sources: ''}
+      this.constructionService.agregarConstruccion(construction).subscribe(respone => {
+        this.modalService.dismissAll();
+        this.registerForm.reset();
+        location.reload();
+      });
     }
-
   }
-  onCompanyChanged(value: any) {
-    console.log('onCountryChanged')
-    console.log(value)
-  }
+  
 
   modalEditar(template: TemplateRef<any>, idCompany: number){
     this.companiesService.obtenerEmpresas().subscribe(response => {
@@ -95,24 +107,94 @@ export class ConstructionsComponent implements OnInit, AfterViewInit, OnDestroy{
     });
     this.updateForm = this.fb.group({
       idConstruction: [''],
-      companyUpdate: [''],
+      companyUpdate: ['', Validators.required],
       nombreUpdate: ['', Validators.required],
       codigoUpdate: ['', Validators.required],
-      linkUpdate: ['', Validators.required]
+      linkUpdate: [''],
     });
     this.constructionService.obtenerContruccionPorId(idCompany).subscribe(response => {
-      console.log(response);
+      
       this.updateForm.controls['idConstruction'].setValue(response.data.id);
       this.updateForm.controls['nombreUpdate'].setValue(response.data.nombre);
       this.updateForm.controls['codigoUpdate'].setValue(response.data.codigo);
       this.updateForm.controls['linkUpdate'].setValue(response.data.link);
       this.updateForm.get('companyUpdate').setValue(response.data.empresa_id);
     });
+    this.updateForm.get("companyUpdate")?.valueChanges.subscribe((f: any) =>{
+      this.onCompanyChanged(f);
+    });
     this.modalService.open(template);
   }
+
+  modificarConstructora(){
+    this.submittedUpdate = true;
+    if(this.updateForm.value.companyUpdate == "null"){
+      this.updateForm.controls["companyUpdate"].setErrors({require: true });
+    }
+    if (this.updateForm.invalid) {
+      return;
+    } else{
+      const updateConstruction = {
+        empresa_id: Number(this.updateForm.value.companyUpdate),
+        Nombre: this.updateForm.value.nombreUpdate,
+      codigo: this.updateForm.value.codigoUpdate,
+      link: this.updateForm.value.linkUpdate,
+      sources: ""
+      }
+      const idConstruction = this.updateForm.value.idConstruction;
+      this.constructionService.actualizarConstruccion(idConstruction, updateConstruction).subscribe(response =>{
+        
+        if(response.success == true){
+          this.modalService.dismissAll();
+          location.reload();
+          this.updateForm.reset();
+        }
+      }, error => {
+        console.log(error);
+      }
+      );
+      
+    }
+  }
+
+  modalActivarDesactivar(template: TemplateRef<any>, constructor: any){
+    this.idConstruction = constructor.id;
+    this.estatus = constructor.status;
+    console.log(this.idConstruction);
+    this.modalService.open(template, { centered: true});
+    if(constructor.status == "1"){     
+      this.mensajeActivarDesactivar = `¿Desea desactivar la constructora ${constructor.nombre}?`;
+      this.textoBotonActivarDes = "Desactivar"
+    }else{
+      this.mensajeActivarDesactivar = `¿Desea reactivar la constructora ${constructor.nombre}?`;
+      this.textoBotonActivarDes = "Activar"
+    }
+
+  }
+
+  eliminarConstruccion(){
+    const id = this.idConstruction;
+    if(this.estatus == "1"){
+      this.constructionService.eliminarConstruccion(id).subscribe(response => {
+        location.reload();
+      });
+    }else{
+      this.constructionService.activarConstruccion(id).subscribe(response => {
+        location.reload();
+      });
+    }
+    
+  }
  
+  onCompanyChanged(value: any) {
+    console.log(value)
+  }
   get f(): { [key: string]: AbstractControl } {
     return this.registerForm.controls;
+  }
+
+  get constrolsUpdate(): { [key: string]: AbstractControl } {
+    return this.updateForm.controls;
   }
 
   ngAfterViewInit(): void {

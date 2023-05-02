@@ -1,1 +1,127 @@
-<p>role works!</p>
+<section class="content" style="padding-left: 15px;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                  </h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-primary btn-block btn-sm" (click)="modalNuevoRol(NuevoRol)" ><i class="fa fa-plus-circle"></i> Nuevo Rol</button>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Estatus</th>
+                        <th style="width: 20%;">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody >
+                      <tr *ngFor="let roles of dataRol">
+                        <td>{{roles.id}}</td>
+                        <td>{{roles.code}}</td>
+                        <td>{{roles.descripcion}}</td>
+                        <td *ngIf="roles.status == '1'" >Activo</td>
+                        <td *ngIf="roles.status != '1'" >Inactivo</td>
+                        <td class="project-actions">
+                          <div class="btn-group btn-group-sm">
+                            <!-- <a class="btn btn-primary" ngbTooltip="Asignar Rol"><i class="fas fa fa-link"></i></a> -->
+                            <a class="btn btn-info" (click)="modalEditarRol(EditarRol, roles)" ngbTooltip="Modificar"><i class="fas fa-pencil-alt"></i></a> 
+                          </div>
+                      </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+        </div>
+    </div>
+</section>
+
+<!-- Modal agregar nuevo -->
+<ng-template #NuevoRol let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="">Nuevo Rol</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- form start -->
+        <form [formGroup]="registerForm" (submit)="guardrNuevoRol()" >
+            <div class="card-body">
+              <div class="form-group">
+                <label for="">Nombre</label>
+                <input type="text" class="form-control" formControlName="code"  placeholder="Nombre" required [ngClass]="{ 'is-invalid': submitted && f['code'].errors }">
+                <div *ngIf="submitted && f['code'].errors" class="invalid-feedback">
+                  <div *ngIf="f['code'].errors['required']">Nombre es obligatorio</div>
+                </div> 
+              </div>
+              <div class="form-group">
+                <label for="">Descripción</label>
+                <textarea class="form-control" placeholder="Descripción" formControlName="descripcion" rows="3" required [ngClass]="{ 'is-invalid': submitted && f['descripcion'].errors }"></textarea>
+                <div *ngIf="submitted && f['descripcion'].errors" class="invalid-feedback">
+                    <div *ngIf="f['descripcion'].errors['required']">Descripción es obligatorio</div>
+                  </div>
+              </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+              <button type="submit"  class="btn btn-primary">Guardar</button>
+            </div>
+           </form>
+      </div>
+      
+    </div>
+  </ng-template>
+
+  <!-- Modal Editar rol -->
+<ng-template #EditarRol let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="">Modificar Rol</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- form start -->
+      <form [formGroup]="updateForm" (submit)="modificarRol()" >
+          <div class="card-body">
+            <div class="form-group">
+              <label for="">Nombre</label>
+              <input type="text" class="form-control" formControlName="codeUpdate"  placeholder="Nombre" required [ngClass]="{ 'is-invalid': submittedUpdate && updateControl['codeUpdate'].errors }">
+              <div *ngIf="submittedUpdate && updateControl['codeUpdate'].errors" class="invalid-feedback">
+                <div *ngIf="updateControl['codeUpdate'].errors['required']">Nombre es obligatorio</div>
+              </div> 
+            </div>
+            <div class="form-group">
+              <label for="">Descripción</label>
+              <textarea class="form-control" placeholder="Descripción" formControlName="descripcionUpdate" rows="3" required [ngClass]="{ 'is-invalid': submittedUpdate && updateControl['descripcionUpdate'].errors }"></textarea>
+              <div *ngIf="submittedUpdate && updateControl['descripcionUpdate'].errors" class="invalid-feedback">
+                  <div *ngIf="updateControl['descripcionUpdate'].errors['required']">Descripción es obligatorio</div>
+                </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+            <button type="submit"  class="btn btn-primary">Guardar</button>
+          </div>
+         </form>
+    </div>
+    
+  </div>
+</ng-template>

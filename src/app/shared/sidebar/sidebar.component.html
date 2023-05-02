@@ -48,6 +48,14 @@
             </a>
           </li>
           <li class="nav-item" *ngIf="tipoUsuario == 'ADMIN'">
+            <a routerLink="roles" class="nav-link">
+              <i class="nav-icon fa fa-cogs"></i>
+              <p>
+                Rol
+              </p>
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="tipoUsuario == 'ADMIN'">
             <a routerLink="users" class="nav-link">
               <i class="nav-icon fas fa-user-alt"></i>
               <p>

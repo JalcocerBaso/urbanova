@@ -16,6 +16,7 @@
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Codigo</th>
+                        <th>Estatus</th>
                         <th class="project-actions text-right" style="width: 20%;">Acciones</th>
                       </tr>
                     </thead>
@@ -24,10 +25,21 @@
                         <td>{{construccion.id}}</td>
                         <td>{{construccion.nombre}}</td>
                         <td>{{construccion.codigo}}</td>
+                        <td *ngIf="construccion.status == '1'" >Activo</td>
+                        <td *ngIf="construccion.status != '1'" >Inactivo</td>
                         <td class="project-actions text-right">
                           <div class="btn-group btn-group-sm">
                             <a  class="btn btn-info" ngbTooltip="Modificar" (click)="modalEditar(EditarCons, construccion.id)" ><i class="fas fa-pencil-alt"></i></a> 
-                            <a  class="btn btn-danger" ngbTooltip="Eliminar"><i class="fas fa-trash"></i></a>
+                            <!-- <a  class="btn btn-danger" ngbTooltip="Eliminar" (click)="modalEliminar(EliminarCons, construccion.id)" ><i class="fas fa-trash"></i></a> -->
+                            <div class="btn btn-light" ngbTooltip="Activar / Desactivar constructora">
+                              <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                <input type="checkbox" class="custom-control-input" #inputChek id="customSwitch{{construccion.id}}" [checked]="true" 
+                                (click)="modalActivarDesactivar(ActivarDesactivarCons, construccion)" *ngIf="construccion.status == '1'" (change)="inputChek.checked = !inputChek.checked" >
+                                <input type="checkbox" class="custom-control-input" #inputChekout id="customSwitch{{construccion.id}}" [checked]="false" 
+                                (click)="modalActivarDesactivar(ActivarDesactivarCons, construccion)" *ngIf="construccion.status != '1'" (change)="inputChekout.checked = !inputChekout.checked">
+                                <label class="custom-control-label" for="customSwitch{{construccion.id}}"></label>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -57,13 +69,21 @@
       <form [formGroup]="registerForm" (ngSubmit)="guardarNuevaConstruccion()">
           <div class="card-body">
             <div class="form-group">
+              <label for="">Nombre</label>
+              <input type="text" class="form-control" formControlName="nombre" placeholder="Codigo" name="nombre" 
+              [ngClass]="{ 'is-invalid': submitted && f['nombre'].errors }" required>
+              <div *ngIf="submitted && f['nombre'].errors" class="invalid-feedback">
+                <div *ngIf="f['nombre'].errors['required']">El campo es obligatorio</div>
+              </div> 
+            </div>
+            <div class="form-group">
               <label for="">Selecciona una compañia</label>
               <select class="form-select" formControlName="company"  name="company"  required [ngClass]="{ 'is-invalid': submitted && f['company'].errors }">
                 <option value="null" >Selecciona una opción</option>
                 <option *ngFor="let companies of dtCompanies; let x = index" value="{{companies.id}}" >{{companies.nombre}}</option>
               </select>
               <div *ngIf="submitted && f['company'].errors" class="invalid-feedback">
-                <div *ngIf="f['company'].errors['required']">El campo es obligatorio</div>
+                <div>Seleccione una opción</div>
               </div> 
             </div>
             <div class="form-group">
@@ -76,11 +96,7 @@
             </div>
             <div class="form-group">
               <label for="">Liga url</label>
-              <input type="text" class="form-control" formControlName="link" placeholder="Liga url" name="link">
-            </div>
-            <div class="form-group">
-              <label >Fuente</label>
-              <input type="text" class="form-control" formControlName="fuente" placeholder="Fuente" name="fuente">
+              <input type="text" class="form-control" formControlName="link" placeholder="Liga url" name="link" >
             </div>
           </div>
           <!-- /.card-body -->
@@ -105,24 +121,34 @@
     
     <div class="modal-body">
       <!-- form start -->
-      <form [formGroup]="updateForm">
+      <form [formGroup]="updateForm" (submit)="modificarConstructora()">
           <div class="card-body">
             <input type="hidden" formControlName="idConstruction" name="idConstruction">
             <div class="form-group">
               <label >Nombre</label>
-              <input type="text" class="form-control" formControlName="nombreUpdate" name="nombreUpdate"  placeholder="nombre" >
+              <input type="text" class="form-control" formControlName="nombreUpdate" name="nombreUpdate"  placeholder="nombre" 
+              [ngClass]="{ 'is-invalid': submittedUpdate && constrolsUpdate['nombreUpdate'].errors }" required>
+              <div *ngIf="submittedUpdate && constrolsUpdate['nombreUpdate'].errors" class="invalid-feedback">
+                <div *ngIf="constrolsUpdate['nombreUpdate'].errors['required']">El campo es obligatorio</div>
+              </div>
             </div>
             <div class="form-group">
               <label for="">Selecciona una compañia</label>
-              <select class="form-select" formControlName="companyUpdate" name="companyUpdate" >
+              <select class="form-select" formControlName="companyUpdate" name="companyUpdate" [ngClass]="{ 'is-invalid': submittedUpdate && constrolsUpdate['companyUpdate'].errors }" required>
                 <option value="null" >Selecciona una opción</option>
                 <option *ngFor="let companies of dtCompanies" value="{{companies.id}}" >{{companies.nombre}}</option>
               </select>
+              <div *ngIf="submittedUpdate && constrolsUpdate['companyUpdate'].errors" class="invalid-feedback">
+                <div >Seleccione una opción</div>
+              </div>
             </div>
             <div class="form-group">
               <label for="">Codigo</label>
-              <input type="text" class="form-control" formControlName="codigoUpdate" placeholder="Codigo" name="codigoUpdate"  >
-              
+              <input type="text" class="form-control" formControlName="codigoUpdate" placeholder="Codigo" name="codigoUpdate"  
+              [ngClass]="{ 'is-invalid': submittedUpdate && constrolsUpdate['codigoUpdate'].errors }" required>
+              <div *ngIf="submittedUpdate && constrolsUpdate['codigoUpdate'].errors" class="invalid-feedback">
+                <div *ngIf="constrolsUpdate['codigoUpdate'].errors['required']">El campo es obligatorio</div>
+              </div>
             </div>
             <div class="form-group">
               <label for="">Liga url</label>
@@ -135,6 +161,43 @@
             <button type="submit" class="btn btn-primary">Guardar</button>
           </div>
          </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal eliminar -->
+<ng-template #ActivarDesactivarCons let-modal>
+  <div class="modal-content">
+    <!-- <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div> -->
+    <div class="modal-body">
+      <!-- form start -->
+          <div class="card-body">
+            <div class="container text-center">
+              <div class="row">
+                <div class="col">
+                  <a class="btn btn-warning">
+                    <i class="fa fa-exclamation fa-3x" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <h5><b>{{mensajeActivarDesactivar}}
+                  </b></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">No</button>
+      <button type="button" (click)="eliminarConstruccion()" class="btn btn-primary">{{textoBotonActivarDes}}</button>
     </div>
   </div>
 </ng-template>

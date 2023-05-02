@@ -36,6 +36,7 @@
                         <td *ngIf="users.status != '1'" >Inactivo</td>
                         <td class="project-actions">
                           <div class="btn-group btn-group-sm">
+                            <a (click)="mostrarModalAsignarEmpresa(modalAsignarEmpresa, users.id)" class="btn btn-secondary" ngbTooltip="Asignar a empresa"><i class="fas fa fa-id-badge"></i></a>
                             <a (click)="mostrarModalAsignarRol(modalAsignarRol, users.id, users.status)" class="btn btn-primary" ngbTooltip="Asignar Rol"><i class="fas fa fa-link"></i></a>
                             <a (click)="mostrarModalEditar(modalEditar, users)" class="btn btn-info" ngbTooltip="Modificar"><i class="fas fa-pencil-alt"></i></a> 
                             <!-- <a (click)="mostrarModalEliminar(modalEliminar, users.name)"  class="btn btn-danger" ngbTooltip="Eliminar"><i class="fas fa-trash"></i></a> -->
@@ -251,3 +252,42 @@
   </div>
 </ng-template>
   
+<!-- The Modal Asignar Empresa-->
+<ng-template #modalAsignarEmpresa let-modal>
+  <div class="modal-content">
+     <div class="modal-header">
+      <h5 class="modal-title" id="">Asignar usuario a empresa</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div> 
+    <div class="modal-body">
+      <!-- form start -->
+          <div class="card-body">
+            <form [formGroup]="asignarEmpresaForm">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Seleccione una empresa</label>
+                    <select class="form-select" formControlName="company"  name="company" 
+                    [ngClass]="{ 'is-invalid': submittedSelectCompany && getSelectCompany['company'].errors }" required >
+                      <option value="null" >Selecciona una opción</option>
+                      <option [ngValue]="company.id" *ngFor="let company of dtCompanies" >{{company.nombre}}</option>
+                    </select>
+                    <div *ngIf="submittedSelectCompany && getSelectCompany['company'].errors" class="invalid-feedback">
+                      <div >Seleccione una empresa</div>
+                    </div>
+                    <div *ngIf="validateCopany" class="alert alert-danger" role="alert">
+                      La empresa esta inactiva o eliminada
+                    </div>
+                  </div>
+                </div>
+            </form>
+          </div>
+          <!-- /.card-body -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+      <button type="button" (click)="asignarEmpresa()"  class="btn btn-primary">Asignar usuario a empresa</button>
+    </div>
+  </div>
+</ng-template>

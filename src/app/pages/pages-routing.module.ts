@@ -8,6 +8,7 @@ import { DocumentsComponent } from './documents/documents.component';
 import { UsersComponent } from './users/users.component';
 import { ConstructionsComponent } from './constructions/constructions.component';
 import { CompaniesComponent } from './companies/companies.component';
+import { RoleComponent } from './role/role.component';
 
 const routes: Routes = [
   { path: 'dashboard', canActivate: [AuthguardGuard], component: PagesComponent, 
@@ -16,7 +17,8 @@ const routes: Routes = [
       {path: 'documents', component: DocumentsComponent, canActivate: [AuthguardGuard], data: {titulo:'Documentos'} },
       {path: 'users', component: UsersComponent, canActivate: [AuthguardGuard], data: {titulo: 'Usuarios'} },
       {path: 'constructions', component: ConstructionsComponent, canActivate: [AuthguardGuard], data: {titulo: 'Constructoras'} },
-      {path: 'companies', component: CompaniesComponent, canActivate: [AuthguardGuard], data: {titulo: 'Empresas'} }
+      {path: 'companies', component: CompaniesComponent, canActivate: [AuthguardGuard], data: {titulo: 'Empresas'} },
+      {path: 'roles', component: RoleComponent, canActivate: [AuthguardGuard], data: {titulo: 'Roles'} }
     ]
   }
 ]

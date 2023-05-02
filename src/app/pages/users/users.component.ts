@@ -5,6 +5,7 @@ import { UsersService } from 'src/app/services/users.service';
 import { User } from 'src/app/models/Users';
 import { Subject } from 'rxjs';
 import { RoleService } from 'src/app/services/role.service';
+import { CompaniesService } from '../../services/companies.service'
 
 
 @Component({
@@ -17,6 +18,7 @@ export class UsersComponent implements OnInit {
   nombre: string = "";
   submitted = false;
   submittedUpdate = false;
+  submittedSelectCompany = false;
   dtTrigger: Subject<any> = new Subject();
   usersModel = new User();
   loading: boolean = false;
@@ -29,11 +31,15 @@ export class UsersComponent implements OnInit {
   filtered :any;
   validateRol: boolean;
   selectRolDisable: boolean = false;
+  dtCompanies: any[] = [];
+  asignarEmpresaForm: any;
+  validateCopany: boolean = false;
 
   constructor(private modalService: NgbModal,
     private fb: FormBuilder,
     private userService: UsersService,
-    private roleServices: RoleService){
+    private roleServices: RoleService,
+    private companiesServices: CompaniesService){
       this.validateRol = false;
     }
 
@@ -125,7 +131,6 @@ export class UsersComponent implements OnInit {
       return;
     }
     const updateUser = {id: this.usersModel.id ,name: this.updateForm.value.nameUpdate, email: this.updateForm.value.email};
-    console.log(updateUser);
     this.userService.actualizarUsuario(updateUser).subscribe(data =>{
       if(data.success){
         this.loading = false;
@@ -186,7 +191,6 @@ export class UsersComponent implements OnInit {
   }
 
   cambiarRole(){
-    console.log(this.selected);
     this.loading = true;
     if(this.selected == null || undefined){
       this.loading = false;
@@ -200,19 +204,65 @@ export class UsersComponent implements OnInit {
           this.loading = false;
           location.reload();
         }
-        console.log(data);
       }, error =>{
         console.log(error);
         this.loading = false;
       });
     }
   }
+
+  mostrarModalAsignarEmpresa(template: TemplateRef<any>, idUsuario: number){
+    this.validateCopany = false;
+    this.usersModel.id = idUsuario;
+    this.asignarEmpresaForm = this.fb.group({
+      company: ['', Validators.required]
+    });
+    this.companiesServices.obtenerEmpresas().subscribe( response =>{
+      this.dtCompanies = response.data;
+    });
+    this.asignarEmpresaForm.controls["company"].setValue("null");
+    this.asignarEmpresaForm.get("company")?.valueChanges.subscribe((f: any) =>{
+      this.onCompanyChanged(f);
+    });
+    
+    this.modalService.open(template, { centered: true });
+  }
+
+  asignarEmpresa(){
+    this.submittedSelectCompany = true;
+    if(this.asignarEmpresaForm.value.company == "null"){
+      this.asignarEmpresaForm.controls["company"].setErrors({require: true });
+    }
+    if (this.asignarEmpresaForm.invalid) {
+      return;
+    }else{
+      const idCompany = this.asignarEmpresaForm.value.company;
+      const req = {user_id: this.usersModel.id, empresa_id: idCompany}
+      this.companiesServices.asignarUsuario(req).subscribe(response => {
+        if(response.success == true){
+          location.reload()
+        }
+      }, error => {
+        console.log(error);
+        this.validateCopany = true;
+      });
+    }
+  }
+
+  onCompanyChanged(value: any) {
+    console.log(value)
+  }
+
   get f(): { [key: string]: AbstractControl } {
     return this.registerForm.controls;
   }
 
   get getControl(): { [key: string]: AbstractControl } {
     return this.updateForm.controls;
+  }
+
+  get getSelectCompany(): { [key: string]: AbstractControl } {
+    return this.asignarEmpresaForm.controls;
   }
 
   ngAfterViewInit(): void {

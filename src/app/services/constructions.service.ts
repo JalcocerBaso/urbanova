@@ -15,7 +15,8 @@ export class ConstructionsService {
 
   agregarConstruccion(construction: any):Observable<any>{
     return this.http.post('https://apiurbanova.baso.com.mx/api/contrucciones',{
-      empresa_id: construction.id,
+      empresa_id: construction.empresa_id,
+      Nombre: construction.Nombre,
       codigo: construction.codigo,
       link: construction.link,
       sources: construction.sources
@@ -28,7 +29,8 @@ export class ConstructionsService {
 
   actualizarConstruccion(id: number,construction: any): Observable<any>{
     return this.http.patch(`https://apiurbanova.baso.com.mx/api/contrucciones/${id}`,{
-      empresa_id: construction.id,
+      empresa_id: construction.empresa_id,
+      Nombre: construction.Nombre,
       codigo: construction.codigo,
       link: construction.link,
       sources: construction.sources
@@ -38,6 +40,7 @@ export class ConstructionsService {
   eliminarConstruccion(id: number): Observable<any>{
     return this.http.delete(`https://apiurbanova.baso.com.mx/api/contrucciones/${id}`);
   }
+  
   activarConstruccion(id: number): Observable<any>{
     return this.http.get(`https://apiurbanova.baso.com.mx/api/contrucciones/activate/${id}`);
   }
