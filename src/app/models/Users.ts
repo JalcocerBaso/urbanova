@@ -8,4 +8,23 @@ export class User {
   public created_at!: string;
   public updated_at!: string;
   public role!: string;
-  }
+  public empresa!: empresa[]
+}
+
+export interface empresa {
+  id:          number;
+  nombre:      string;
+  descripcion: string;
+  status:      string;
+  created_at:  string;
+  updated_at:  string;
+  pivot:       Pivot;
+}
+
+export interface Pivot {
+  user_id:    string;
+  empresa_id: string;
+  created_at: string;
+  updated_at: string;
+}
+

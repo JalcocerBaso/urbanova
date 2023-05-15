@@ -14,6 +14,7 @@ export class LoginComponent {
   validate: boolean = true;
   users?: User;
   submitted = false;
+  tipoUsuario: string = "";
   constructor(private router: Router,
     private activedRoute: ActivatedRoute,
     private fb: FormBuilder,
@@ -56,6 +57,8 @@ export class LoginComponent {
     localStorage.clear();
     localStorage.setItem('token', token);
     this.loginServices.getUserLogedIn().subscribe(data => {
+      this.tipoUsuario = data.message;
+      localStorage.setItem('tipoUsuario', this.tipoUsuario);
       this.router.navigate(['/dashboard'], { relativeTo: this.activedRoute });
     });
   }

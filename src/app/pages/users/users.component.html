@@ -21,6 +21,7 @@
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Correo</th>
+                        <th>Empresa</th>
                         <th>Rol</th>
                         <th>Estatus</th>
                         <th style="width: 20%;">Acciones</th>
@@ -31,15 +32,23 @@
                         <td>{{ users.id }}</td>
                         <td>{{ users.name }}</td>
                         <td>{{ users.email }}</td>
+                        <td *ngIf="users.empresa.length">
+                          {{users.empresa[0].nombre}}</td>
+                        <td *ngIf="!users.empresa.length ">
+                          Sin asginar
+                        </td>  
+                        <!-- <td *ngFor="let comp of users.empresa">
+                          {{comp.nombre}}
+                        </td> -->
                         <td>{{ users.role }}</td>
                         <td *ngIf="users.status == '1'" >Activo</td>
                         <td *ngIf="users.status != '1'" >Inactivo</td>
                         <td class="project-actions">
                           <div class="btn-group btn-group-sm">
-                            <a (click)="mostrarModalAsignarEmpresa(modalAsignarEmpresa, users.id)" class="btn btn-secondary" ngbTooltip="Asignar a empresa"><i class="fas fa fa-id-badge"></i></a>
+                            <a (click)="mostrarModalAsignarEmpresa(modalAsignarEmpresa, users)" class="btn btn-secondary" ngbTooltip="Asignar a empresa"><i class="fas fa fa-id-badge"></i></a>
                             <a (click)="mostrarModalAsignarRol(modalAsignarRol, users.id, users.status)" class="btn btn-primary" ngbTooltip="Asignar Rol"><i class="fas fa fa-link"></i></a>
                             <a (click)="mostrarModalEditar(modalEditar, users)" class="btn btn-info" ngbTooltip="Modificar"><i class="fas fa-pencil-alt"></i></a> 
-                            <!-- <a (click)="mostrarModalEliminar(modalEliminar, users.name)"  class="btn btn-danger" ngbTooltip="Eliminar"><i class="fas fa-trash"></i></a> -->
+                            <a (click)="mostrarModalCambiarPassword(modalCambiarPassword,users.id)" class="btn btn-danger" ngbTooltip="Cambiar contraseña"><i class="fas fa-unlock"></i></a>
                             <div class="btn btn-light" ngbTooltip="Activar / Desactivar usuario">
                               <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                                 <input type="checkbox" class="custom-control-input" #inputChek id="customSwitch{{users.id}}" [checked]="true" 
@@ -288,6 +297,60 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
       <button type="button" (click)="asignarEmpresa()"  class="btn btn-primary">Asignar usuario a empresa</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- The Modal Asignar Empresa-->
+<ng-template #modalCambiarPassword let-modal>
+  <div class="modal-content">
+     <div class="modal-header">
+      <h5 class="modal-title" id="">Cambiar contraseña</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div> 
+    <div class="modal-body">
+      <!-- form start -->
+          <div class="card-body">
+            <form [formGroup]="modificarPasswordForm">
+                <div class="card-body">
+                  <div class="form-group">
+                    <input type="hidden" formControlName="id">
+                    <label >Nueva contraseña</label>
+                    <input type="password" class="form-control"  placeholder="Contraseña" formControlName="newPassword" required
+                    [ngClass]="{ 'is-invalid': submittedNewPassword && getControlNewPassword['newPassword'].errors }">
+                    <div *ngIf="submittedNewPassword && getControlNewPassword['newPassword'].errors" class="invalid-feedback">
+                      <div *ngIf="getControlNewPassword['newPassword'].errors['required']">Contraseña obligatoria</div>
+                      <div *ngIf="getControlNewPassword['newPassword'].errors['minlength']">
+                        Contraseña debe contener un mínimo de 5 caracteres
+                      </div>
+                      <div *ngIf="getControlNewPassword['newPassword'].errors['maxlength']">
+                        Contraseña debe contener un máximo de 8 caracteres
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label >Confirmar nueva contraseña</label>
+                    <input type="password" class="form-control" formControlName="confirmNewPassword" placeholder="Confirmar contraseña" required
+                    [ngClass]="{ 'is-invalid': submittedNewPassword && getControlNewPassword['confirmNewPassword'].errors }">
+                    <div *ngIf="submittedNewPassword && getControlNewPassword['confirmNewPassword'].errors" class="invalid-feedback">
+                      <div *ngIf="getControlNewPassword['confirmNewPassword'].errors['required']">
+                        Confirmar contraseña es obligatorio
+                      </div>
+                      <div *ngIf="getControlNewPassword['confirmNewPassword'].errors['matching']">
+                        La contraseña con coincide
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </form>
+          </div>
+          <!-- /.card-body -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+      <button type="button" (click)="modificarPassword()" class="btn btn-primary">Guardar Nueva contraseña</button>
     </div>
   </div>
 </ng-template>

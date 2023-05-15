@@ -44,4 +44,8 @@ export class ConstructionsService {
   activarConstruccion(id: number): Observable<any>{
     return this.http.get(`https://apiurbanova.baso.com.mx/api/contrucciones/activate/${id}`);
   }
+
+  ObtenerArchivosPorConstructora(idConstructor: number): Observable<any>{
+    return this.http.get(`https://apiurbanova.baso.com.mx/api/contrucciones/archivos/${idConstructor}`);
+  }
 }

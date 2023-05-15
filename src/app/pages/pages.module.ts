@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RoleComponent } from './role/role.component';
+import { ArchivosComponent } from './archivos/archivos.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { RoleComponent } from './role/role.component';
     UsersComponent,
     ConstructionsComponent,
     CompaniesComponent,
-    RoleComponent
+    RoleComponent,
+    ArchivosComponent
   ],
   imports: [
     CommonModule,
@@ -41,7 +43,9 @@ import { RoleComponent } from './role/role.component';
     DocumentsComponent,
     UsersComponent,
     ConstructionsComponent,
-    CompaniesComponent
+    CompaniesComponent,
+    RoleComponent,
+    ArchivosComponent
   ]
 })
 export class PagesModule { }

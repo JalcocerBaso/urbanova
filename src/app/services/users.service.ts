@@ -37,4 +37,8 @@ export class UsersService {
     return this.http.post(url, {user_id: idUsuario, role_id: idRol});
   }
 
+  modificarContraseña(idUsuario: number, password: any){
+    return this.http.post(`https://apiurbanova.baso.com.mx/api/users/password/${idUsuario}`, password);
+  }
+
 }

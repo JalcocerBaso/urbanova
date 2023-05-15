@@ -1,0 +1,49 @@
+<section class="content" style="padding-left: 15px;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">{{nombre}}</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <!-- <div class="row">
+                        <div class="col-sm-3"  *ngFor="let archivos of dtArchivos">
+                            <div class="card border-dark mb-3" style="width: 15rem;" >
+                                <div class="card-body">
+                                  <h5 class="card-title"><strong>{{archivos.nombre}}</strong> </h5>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="" class="btn btn-danger">Descargar <i class="fas fa fa-download"></i> </a> 
+                                    <a href="" class="btn btn-success">ver <i class="fas fa fa-eye"></i> </a> 
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="row">
+                        <div class="col-md-3" *ngFor="let archivos of dtArchivos">
+                            <div class="card card-success shadow">
+                                <div class="card-header">
+                                  <h3 class="card-title">{{archivos.nombre}}</h3>
+                  
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <div class="btn-group btn-group-sm" style="width: 100%;">
+                                        <a href="{{archivos.link_descargar}}" target="_blank" class="btn btn-danger">Descargar <i class="fas fa fa-download"></i> </a> 
+                                        <a href="{{archivos.link_vista}}" target="_blank" class="btn btn-primary">ver <i class="fas fa fa-eye"></i> </a> 
+                                    </div>
+                                </div> 
+                                <!-- /.card-body -->
+                              </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <!-- /.card-body -->
+            </div>
+              <!-- /.card -->
+        </div>
+    </div>
+</section>

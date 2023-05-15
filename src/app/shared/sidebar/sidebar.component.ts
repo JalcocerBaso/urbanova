@@ -17,9 +17,12 @@ export class SidebarComponent implements OnInit{
   username: string = '';
   tipoUsuario: string = '';
   ngOnInit(): void {
-    //const token = localStorage.getItem('token');
     this.loginService.getUserLogedIn().subscribe(data => {
-      this.user = data.data;
+      if(data.data.length > 1){
+        this.user = data.data
+      }else{
+        this.user.push(data.data);
+      }
       this.username = this.user[0].name;
       this.tipoUsuario = data.message;
     });

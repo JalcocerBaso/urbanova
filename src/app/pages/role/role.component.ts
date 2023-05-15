@@ -3,6 +3,8 @@ import { Subject } from 'rxjs';
 import { RoleService } from '../../services/role.service';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UsersService } from 'src/app/services/users.service';
+import { User } from 'src/app/models/Users';
 
 @Component({
   selector: 'app-role',
@@ -13,7 +15,8 @@ export class RoleComponent implements OnInit {
 
   constructor(private roleServices: RoleService,
     private fb: FormBuilder,
-    private  modalServices: NgbModal){}
+    private modalServices: NgbModal,
+    private usuarioService: UsersService){}
 
   dtTrigger: Subject<any> = new Subject();
   dtOptions: DataTables.Settings = {};
@@ -25,6 +28,9 @@ export class RoleComponent implements OnInit {
   });
   updateForm: any;
   submittedUpdate: boolean = false;
+  asignarRolForm: any;
+  dataUsuarios: User[] = [];
+  submittedAsignarRol: boolean = false;
 
   ngOnInit(): void {
     this.roleServices.obtenerRoles().subscribe(data =>{
@@ -63,9 +69,11 @@ export class RoleComponent implements OnInit {
       return;
     }
     const roles = {code: this.registerForm.value.code, descripcion: this.registerForm.value.descripcion};
-    console.log(roles);
+    
     this.roleServices.crearRol(roles).subscribe(response =>{
-      console.log(response);
+      if(response.success){
+        location.reload();
+      }
     });
   }
 
@@ -85,6 +93,59 @@ export class RoleComponent implements OnInit {
     if (this.updateForm.invalid) {
       return;
     }
+    const idRol = this.updateForm.value.idRol;
+    const rol = {code: this.updateForm.value.codeUpdate, descripcion: this.updateForm.value.descripcionUpdate};
+    this.roleServices.actualizarRol(idRol,rol).subscribe(response => {
+      if(response.success){
+        location.reload();
+      }
+    }, error => {
+      console.log(error);
+    }
+    );
+  }
+
+  modalAsignarRolUsuario(template: TemplateRef<any>){
+    this.submittedAsignarRol = false;
+    this.usuarioService.obtenerUsuarios().subscribe(response => {
+      this.dataUsuarios = response.data;
+    });
+    this.asignarRolForm = this.fb.group({
+      usuarios: [null, Validators.required],
+      rolUsuario: [null],
+      roles: [null, Validators.required]
+    });
+    this.asignarRolForm.get('usuarios').setValue(null);
+    
+    this.asignarRolForm.get("usuarios")?.valueChanges.subscribe((value: any) =>{
+      this.asignarRolForm.controls["rolUsuario"].setValue(value.role);
+    });
+    this.asignarRolForm.get("roles")?.valueChanges.subscribe((value: any) =>{
+      console.log(value.id);
+    })
+    this.asignarRolForm.controls['rolUsuario'].disable();
+    this.modalServices.open(template, {centered: true, size: "lg"});
+  }
+
+  asignarRolUsuario(){
+    this.submittedAsignarRol = true;
+
+    if(this.asignarRolForm.value.usuarios == "null"){
+      this.asignarRolForm.controls["usuarios"].setErrors({require: true });
+    }
+    if(this.asignarRolForm.value.roles == "null"){
+      this.asignarRolForm.controls["roles"].setErrors({require: true });
+    }
+    if (this.asignarRolForm.invalid) {
+      return;
+    }else{
+      const role = {user_id: this.asignarRolForm.value.usuarios.id, role_id: this.asignarRolForm.value.roles.id};
+      this.roleServices.asignarRolaUsuario(role).subscribe(response => {
+        if(response.success){
+          location.reload();
+        }
+      });
+    }
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -93,6 +154,10 @@ export class RoleComponent implements OnInit {
 
   get updateControl(): { [key: string]: AbstractControl } {
     return this.updateForm.controls;
+  }
+
+  get controlsAsignarRol(): { [key: string]: AbstractControl } {
+    return this.asignarRolForm.controls;
   }
   ngAfterViewInit(): void {
     this.dtTrigger.next;

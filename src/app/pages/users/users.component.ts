@@ -34,6 +34,8 @@ export class UsersComponent implements OnInit {
   dtCompanies: any[] = [];
   asignarEmpresaForm: any;
   validateCopany: boolean = false;
+  modificarPasswordForm: any;
+  submittedNewPassword = false;
 
   constructor(private modalService: NgbModal,
     private fb: FormBuilder,
@@ -211,9 +213,10 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  mostrarModalAsignarEmpresa(template: TemplateRef<any>, idUsuario: number){
+  mostrarModalAsignarEmpresa(template: TemplateRef<any>, users: any){
     this.validateCopany = false;
-    this.usersModel.id = idUsuario;
+    this.usersModel.id = users.id;
+    const status = users.status;
     this.asignarEmpresaForm = this.fb.group({
       company: ['', Validators.required]
     });
@@ -224,7 +227,9 @@ export class UsersComponent implements OnInit {
     this.asignarEmpresaForm.get("company")?.valueChanges.subscribe((f: any) =>{
       this.onCompanyChanged(f);
     });
-    
+    if(status != '1'){
+      this.asignarEmpresaForm.controls['company'].disable();
+    }
     this.modalService.open(template, { centered: true });
   }
 
@@ -249,6 +254,35 @@ export class UsersComponent implements OnInit {
     }
   }
 
+  mostrarModalCambiarPassword(template: TemplateRef<any>, idUsuario: number){
+    this.submittedNewPassword = false;
+    this.modificarPasswordForm = this.fb.group({
+      id: [''],
+      newPassword: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(8)]],
+      confirmNewPassword: ['', Validators.required]
+    },
+    {
+      validator: [Validation.match('newPassword', 'confirmNewPassword')]
+    });
+    this.modificarPasswordForm.get('id').setValue(idUsuario)
+    this.modalService.open(template);
+  }
+
+  modificarPassword(){
+    this.submittedNewPassword = true;
+    this.loading = true;
+    if (this.modificarPasswordForm.invalid) {
+      return;
+    }
+    const newPassword = {password: this.modificarPasswordForm.value.newPassword};
+    const idUsuario = this.modificarPasswordForm.value.id;
+    console.log(newPassword);
+    this.modalService.dismissAll();
+    this.userService.modificarContraseña(idUsuario,newPassword).subscribe(response =>{
+      this.loading = false;
+      console.log(response);
+    });
+  }
   onCompanyChanged(value: any) {
     console.log(value)
   }
@@ -265,6 +299,9 @@ export class UsersComponent implements OnInit {
     return this.asignarEmpresaForm.controls;
   }
 
+  get getControlNewPassword(): { [key: string]: AbstractControl } {
+    return this.modificarPasswordForm.controls;
+  }
   ngAfterViewInit(): void {
     this.dtTrigger.next;
   }

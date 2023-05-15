@@ -4,6 +4,7 @@
             <div class="card">
                 <div class="card-header">
                   <h3 class="card-title">
+                    <button type="button" class="btn btn-info btn-block btn-sm" (click)="modalAsignarRolUsuario(AsignarRol)" ><i class="fa fa-cogs"></i> Asignar Rol a Usuario</button>
                   </h3>
                   <div class="card-tools">
                     <button type="button" class="btn btn-primary btn-block btn-sm" (click)="modalNuevoRol(NuevoRol)" ><i class="fa fa-plus-circle"></i> Nuevo Rol</button>
@@ -30,7 +31,6 @@
                         <td *ngIf="roles.status != '1'" >Inactivo</td>
                         <td class="project-actions">
                           <div class="btn-group btn-group-sm">
-                            <!-- <a class="btn btn-primary" ngbTooltip="Asignar Rol"><i class="fas fa fa-link"></i></a> -->
                             <a class="btn btn-info" (click)="modalEditarRol(EditarRol, roles)" ngbTooltip="Modificar"><i class="fas fa-pencil-alt"></i></a> 
                           </div>
                       </td>
@@ -125,3 +125,65 @@
     
   </div>
 </ng-template>
+
+  <!-- Modal Asignar rol -->
+  <ng-template #AsignarRol let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Asignar rol a usuario</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- form start -->
+        <form [formGroup]="asignarRolForm"  >
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Usuario</label>
+                        <select class="form-control" formControlName="usuarios" name="usuarios" 
+                        [ngClass]="{ 'is-invalid': submittedAsignarRol && controlsAsignarRol['usuarios'].errors }" required>
+                          <option value="null" >Selecciona una opción</option>
+                          <option [ngValue]="users" *ngFor="let users of dataUsuarios">{{users.name}}</option>
+                        </select>
+                        <div *ngIf="submittedAsignarRol && controlsAsignarRol['usuarios'].errors" class="invalid-feedback">
+                          Seleccione un usuario
+                        </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Rol del usuairo</label>
+                    <input type="text" class="form-control" placeholder="" formControlName="rolUsuario" name="rolUsuario" >
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Rol</label>
+                        <select class="form-control" formControlName="roles" name="usuarios"
+                        [ngClass]="{ 'is-invalid': submittedAsignarRol && controlsAsignarRol['roles'].errors }" required>
+                          <option value="null" >Selecciona una opción</option>
+                          <option [ngValue]="roles" *ngFor="let roles of dataRol">{{roles.code}}</option>
+                        </select>
+                        <div *ngIf="submittedAsignarRol && controlsAsignarRol['roles'].errors" class="invalid-feedback">
+                          Seleccione un rol
+                        </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="modal.dismiss()">Cancelar</button>
+              <button type="submit" (click)="asignarRolUsuario()"  class="btn btn-primary">Asignar Rol</button>
+            </div>
+        </form>
+      </div>
+      
+    </div>
+  </ng-template>

@@ -32,4 +32,7 @@ export class CompaniesService {
   quitarUsuarioAsignado(request: any): Observable<any>{
     return this.http.post('https://apiurbanova.baso.com.mx/api/api/empresas/user/desatach', request);
   }
+  obtenerEmpresaPorId(idEmpresa: number): Observable<any>{
+    return this.http.get(`https://apiurbanova.baso.com.mx/api/empresas/${idEmpresa}`);
+  }
 }
