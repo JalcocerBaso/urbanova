@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Archivo } from 'src/app/models/archivos';
 import { ConstructionsService } from 'src/app/services/constructions.service';
 
@@ -11,11 +12,15 @@ import { ConstructionsService } from 'src/app/services/constructions.service';
 export class ArchivosComponent implements OnInit{
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private constructionService: ConstructionsService){}
+    private constructionService: ConstructionsService,
+    private modalService: NgbModal){}
 
   idConstruction: number | undefined;
   nombre: string = '';
   public dtArchivos: Archivo[] = [];
+  linkVista: string = "";
+  nombreArchivo: string = "";
+  linkActualizada: any;
   
   ngOnInit(): void {
     this.route.queryParams.subscribe(params =>{
@@ -24,8 +29,16 @@ export class ArchivosComponent implements OnInit{
     });
 
     this.constructionService.ObtenerArchivosPorConstructora(this.idConstruction!).subscribe(response =>{
-      console.log(response.archivos);
       this.dtArchivos = response.archivos;
     });
+  }
+
+  modalVerArchivos(template: TemplateRef<any>, archivo: Archivo){
+    this.linkVista = archivo.link_vista.replace("view?usp=drivesdk","preview");
+    console.log(this.linkVista);
+    console.log(archivo);
+    this.nombreArchivo = archivo.nombre;
+    this.linkActualizada = archivo.link_actualizada;
+    this.modalService.open(template, {size: 'xl'});
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, firstValueFrom, lastValueFrom } from 'rxjs';
 import { Archivo } from 'src/app/models/archivos';
 import { constructions } from 'src/app/models/constructions';
 import { CompaniesService } from 'src/app/services/companies.service';
@@ -23,7 +23,6 @@ export class DocumentsComponent implements OnInit{
   public dtArchivos: Archivo[] = [];
   dtTrigger: Subject<any> = new Subject();
   idEmpresa: number = 0;
-  cantidadArchivos: number = 0;
 
   ngOnInit(): void {
     this.dtOptions = {
@@ -51,22 +50,17 @@ export class DocumentsComponent implements OnInit{
     this.companyServices.obtenerEmpresaPorId(this.idEmpresa).subscribe(response =>{
       this.dtConstruccions = response.data.construccion;
       this.dtTrigger.next(null);
-      // this.dtConstruccions.forEach(s => {
-      //   this.mostrarCantidadArchivos(s.id);
-      // });
     });
-    
   }
 
   mostrarArchivos(construcionId: number, nombre: string){
     this.router.navigate(['/dashboard/archivos', construcionId, nombre ],{ relativeTo: this.activatedRoute})
   }
 
-  mostrarCantidadArchivos(idConstruction: number){
-    this.constructionService.ObtenerArchivosPorConstructora(idConstruction).subscribe(response =>{
-      console.log(response.archivos);
-      this.cantidadArchivos = response.archivos.Length 
-    });
+  async mostrarCantidadArchivos(idConstruction: number){
+    const data = this.constructionService.ObtenerArchivosPorConstructora(idConstruction);
+    let archivos = await firstValueFrom(data);
+    console.log(archivos);
   }
 
   ngAfterViewInit(): void {

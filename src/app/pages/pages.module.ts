@@ -15,6 +15,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RoleComponent } from './role/role.component';
 import { ArchivosComponent } from './archivos/archivos.component';
+import { SafePipe } from '../safe.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ArchivosComponent } from './archivos/archivos.component';
     ConstructionsComponent,
     CompaniesComponent,
     RoleComponent,
-    ArchivosComponent
+    ArchivosComponent,
+    SafePipe
   ],
   imports: [
     CommonModule,

@@ -24,14 +24,15 @@
                         <div class="col-md-3" *ngFor="let archivos of dtArchivos">
                             <div class="card card-success shadow">
                                 <div class="card-header">
-                                  <h3 class="card-title">{{archivos.nombre}}</h3>
-                  
+                                  <h6>{{archivos.nombre}}</h6> 
+                                  
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">
                                     <div class="btn-group btn-group-sm" style="width: 100%;">
-                                        <a href="{{archivos.link_descargar}}" target="_blank" class="btn btn-danger">Descargar <i class="fas fa fa-download"></i> </a> 
-                                        <a href="{{archivos.link_vista}}" target="_blank" class="btn btn-primary">ver <i class="fas fa fa-eye"></i> </a> 
+                                        <a *ngIf="archivos.link_actualizada == null" href="{{archivos.link_descargar}}" target="_blank" class="btn btn-danger">Descargar <i class="fas fa fa-download"></i> </a> 
+                                        <a *ngIf="archivos.link_actualizada != null" href="{{archivos.link_actualizada}}" target="_blank" class="btn btn-danger">Descargar <i class="fas fa fa-download"></i> </a> 
+                                        <a (click)="modalVerArchivos(verArchivos, archivos)" class="btn btn-primary">ver <i class="fas fa fa-eye"></i> </a> 
                                     </div>
                                 </div> 
                                 <!-- /.card-body -->
@@ -47,3 +48,47 @@
         </div>
     </div>
 </section>
+
+<!-- Modal editar -->
+<ng-template #verArchivos let-modal >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{nombreArchivo}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- form start -->
+        <div class="container text-center">
+            <div class="row">
+              <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Archivo modificado</h3>
+                    </div>
+                    <div class="card-body">
+                        <iframe [src]="linkVista | safe" width="100%" height="480" frameborder='no' allow="autoplay"></iframe>
+                    </div>
+                </div>
+                
+              </div>
+              <div class="col" *ngIf="linkActualizada != null">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Ultima modificacion</h3>
+                    </div>
+                    <div class="card-body">
+                        <iframe [src]="" width="100%" height="480" allow="autoplay"></iframe>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            
+        
+        
+      </div>
+    </div>
+  </ng-template>
