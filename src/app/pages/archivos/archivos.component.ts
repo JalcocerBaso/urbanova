@@ -34,9 +34,12 @@ export class ArchivosComponent implements OnInit{
   }
 
   modalVerArchivos(template: TemplateRef<any>, archivo: Archivo){
-    this.linkVista = archivo.link_vista.replace("view?usp=drivesdk","preview");
-    console.log(this.linkVista);
-    console.log(archivo);
+    if(archivo.link_vista.includes("drive.google.com")){
+      this.linkVista = archivo.link_vista.replace("view?usp=drivesdk","preview");
+    } else if(archivo.link_vista.includes("www.dropbox.com")){
+      this.linkVista = archivo.link_vista.replace("dl=0","raw=1");
+    }
+    //console.log(archivo);
     this.nombreArchivo = archivo.nombre;
     this.linkActualizada = archivo.link_actualizada;
     this.modalService.open(template, {size: 'xl'});

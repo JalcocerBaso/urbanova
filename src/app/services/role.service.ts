@@ -8,25 +8,26 @@ import { Observable } from 'rxjs/internal/Observable';
 export class RoleService {
 
   constructor(private http: HttpClient) { }
+  url: string = "https://apiurbanovadev.baso.com.mx";
 
   obtenerRoles(): Observable<any>{
-    return this.http.get('https://apiurbanova.baso.com.mx/api/roles');
+    return this.http.get(this.url + '/api/roles');
   }
 
   crearRol(rol: any): Observable<any>{
-    return this.http.post('https://apiurbanova.baso.com.mx/api/roles', rol);
+    return this.http.post(this.url + '/api/roles', rol);
   }
 
   obtenerRolPorId(id: number): Observable<any>{
-    return this.http.get(`https://apiurbanova.baso.com.mx/api/roles/${id}`);
+    return this.http.get(`${this.url}/api/roles/${id}`);
   }
 
   eliminarRol(id: number): Observable<any>{
-    return this.http.delete(`https://apiurbanova.baso.com.mx/api/roles/${id}`);
+    return this.http.delete(`${this.url}/api/roles/${id}`);
   }
 
   actualizarRol(id: number, rol: any): Observable<any>{
-    return this.http.patch(`https://apiurbanova.baso.com.mx/api/roles/${id}`,
+    return this.http.patch(`${this.url}/api/roles/${id}`,
     {
       code: rol.code,
       descripcion: rol.descripcion
@@ -34,6 +35,6 @@ export class RoleService {
   }
 
   asignarRolaUsuario(rol: any): Observable<any>{
-    return this.http.post('https://apiurbanova.baso.com.mx/api/roles/user/attach', rol);
+    return this.http.post(this.url +'/api/roles/user/attach', rol);
   }
 }

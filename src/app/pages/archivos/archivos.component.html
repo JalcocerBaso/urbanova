@@ -66,10 +66,11 @@
               <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Archivo modificado</h3>
+                        <h3 class="card-title">Modificación actual</h3>
                     </div>
                     <div class="card-body">
-                        <iframe [src]="linkVista | safe" width="100%" height="480" frameborder='no' allow="autoplay"></iframe>
+                        <iframe *ngIf="linkActualizada == null" [src]="linkVista | safe" width="100%" height="480" frameborder='no' allow="autoplay"></iframe>
+                        <iframe *ngIf="linkActualizada != null" [src]="linkActualizada | safe" width="100%" height="480" frameborder='no' allow="autoplay"></iframe>
                     </div>
                 </div>
                 
@@ -80,15 +81,12 @@
                         <h3 class="card-title">Ultima modificacion</h3>
                     </div>
                     <div class="card-body">
-                        <iframe [src]="" width="100%" height="480" allow="autoplay"></iframe>
+                        <iframe [src]="linkVista | safe" width="100%" height="480" allow="autoplay"></iframe>
                     </div>
                 </div>
               </div>
             </div>
           </div>
-            
-        
-        
       </div>
     </div>
   </ng-template>

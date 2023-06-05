@@ -11,21 +11,22 @@ export class LoginService {
   .set('Content-Type', 'application/json')
   .set('Access-Control-Allow-Origin', '*');
   constructor(private http: HttpClient) { }
+  url: string = "https://apiurbanovadev.baso.com.mx";
 
   login(user: any): Observable<any>{
-    return this.http.post('https://apiurbanova.baso.com.mx/api/login', user);
+    return this.http.post(this.url +'/api/login', user);
   }
 
   register(user: any): Observable<any> {
-    return this.http.post("https://apiurbanova.baso.com.mx/api/register", user);
+    return this.http.post(this.url + "/api/register", user);
   }
 
   getUserLogedIn() : Observable<any>{
     // const headers = new HttpHeaders().append('Content-Type', 'application/json').
     // append('Authorization', `Bearer ${token}`);
-    return this.http.get("https://apiurbanova.baso.com.mx/api/users");
+    return this.http.get(this.url +"/api/users");
   }
   logout(): Observable<any>{
-    return this.http.post("https://apiurbanova.baso.com.mx/api/logout", {});
+    return this.http.post(this.url +"/api/logout", {});
   }
 }
